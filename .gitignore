@@ -1,3 +1,5 @@
 .env
 
+
+# Ignorar archivo de credenciales de Firebase
 sandra-77bcf-firebase-adminsdk-fbsvc-b0ae33bf48.json

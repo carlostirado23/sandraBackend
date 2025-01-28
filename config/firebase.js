@@ -4,7 +4,7 @@ let app;
 if (!firebaseAdmin.apps.length) {
     app = firebaseAdmin.initializeApp({
         credential: firebaseAdmin.credential.cert(
-            require("../sandra-77bcf-firebase-adminsdk-fbsvc-b0ae33bf48.json")
+            require("../../sandra-77bcf-firebase-adminsdk-fbsvc-b0ae33bf48.json")
         ),
     });
 } else {
