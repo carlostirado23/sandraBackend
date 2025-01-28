@@ -11,6 +11,9 @@ app.use(express.json());
 app.use("/api/clientes", clienteRoutes);
 
 // Iniciar el servidor
-app.listen(port, () => {
-    console.log(`Servidor corriendo en http://localhost:${port}`);
-});
+// app.listen(port, () => {
+//     console.log(`Servidor corriendo en http://localhost:${port}`);
+// });
+
+// Exporta la app para que Vercel la utilice
+module.exports = app;
