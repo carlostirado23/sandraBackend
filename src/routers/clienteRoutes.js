@@ -1,19 +1,9 @@
+// clienteRoutes.js
 const express = require("express");
-const {
-    getClientes,
-    getClienteById,
-    createCliente,
-    updateCliente,
-    deleteCliente,
-} = require("../controllers/clienteController");
-
 const router = express.Router();
+const { getClientes } = require("../controllers/clienteController"); // Asegúrate de que la ruta sea correcta
 
-// Rutas para clientes
-router.get("/", getClientes); 
-router.get("/:id", getClienteById); 
-router.post("/", createCliente); 
-router.put("/:id", updateCliente); 
-router.delete("/:id", deleteCliente); 
+// Definir la ruta GET y pasar la función del controlador
+router.get("/", getClientes);
 
 module.exports = router;
