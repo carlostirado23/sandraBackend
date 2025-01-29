@@ -1,4 +1,5 @@
 const db = require("../../config/firebase").db;
+const clienteModel = require("../models/clienteModel"); 
 
 // Obtener todos los clientes
 exports.getClientes = async (req, res) => {

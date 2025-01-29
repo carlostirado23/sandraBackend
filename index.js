@@ -1,7 +1,11 @@
 const express = require("express");
 const clienteRoutes = require("./src/routers/clienteRoutes"); // Asegúrate de que la ruta sea correcta
 const app = express();
+const cors = require('cors');
+
 require("dotenv").config();
+
+app.use(cors());
 
 const PORT = process.env.PORT;
 
