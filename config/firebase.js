@@ -4,11 +4,10 @@ const admin = require("firebase-admin");
 
 // Función para procesar la clave privada
 const processPrivateKey = (key) => {
-    // Asegurarse de que la clave privada esté en el formato correcto
-    if (typeof key === "string") {
-        return key.replace(/\\n/g, "\n");
-    }
-    return key;
+    // Verifica si la clave viene con comillas y las remueve si es necesario
+    const cleanKey = key?.replace(/"/g, "") || "";
+    // Reemplaza los \n escapados por saltos de línea reales
+    return cleanKey.replace(/\\n/g, "\n");
 };
 
 const serviceAccount = {
@@ -25,18 +24,22 @@ const serviceAccount = {
     universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN,
 };
 
+let db;
+
 try {
     if (!admin.apps.length) {
         admin.initializeApp({
             credential: admin.credential.cert(serviceAccount),
         });
         console.log("Firebase inicializado correctamente");
+        db = admin.firestore();
+    } else {
+        db = admin.firestore();
     }
 } catch (error) {
     console.error("Error al inicializar Firebase:", error);
+    console.error("Service Account:", JSON.stringify(serviceAccount, null, 2));
     throw error;
 }
-
-const db = admin.firestore();
 
 module.exports = { db, admin };
