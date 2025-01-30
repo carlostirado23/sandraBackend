@@ -1,5 +1,5 @@
 const express = require("express");
-const clienteRoutes = require("./src/routers/clienteRoutes"); // Asegúrate de que la ruta sea correcta
+const clienteRoutes = require("./src/routers/clienteRoutes");
 const app = express();
 const cors = require('cors');
 
