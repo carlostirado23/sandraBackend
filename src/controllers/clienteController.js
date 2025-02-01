@@ -1,5 +1,4 @@
 const db = require("../../config/firebase").db;
-const clienteModel = require("../models/clienteModel"); 
 
 // Obtener todos los clientes
 exports.getClientes = async (req, res) => {
@@ -33,8 +32,29 @@ exports.getClienteById = async (req, res) => {
 // Crear un nuevo cliente
 exports.createCliente = async (req, res) => {
     try {
-        const nuevoCliente = req.body;
+        const { nombres, apellidos, telefono, fechaEntrega, imagen } = req.body;
+
+        if (!imagen) {
+            return res.status(400).json({ error: "El campo imagen es obligatorio" });
+        }
+
+        // Verificar si la imagen está en formato Base64
+        if (typeof imagen !== "string") {
+            return res.status(400).json({ error: "El campo imagen debe ser una cadena en Base64" });
+        }
+
+        // Verificar si la imagen excede el límite de tamaño (por ejemplo 1MB)
+        const imageSize = Buffer.from(imagen, "base64").length;
+        const maxSize = 1048487; // 1MB en bytes
+
+        if (imageSize > maxSize) {
+            return res.status(400).json({ error: "La imagen es demasiado grande. Debe ser menor a 1MB." });
+        }
+
+        // Crear el nuevo cliente
+        const nuevoCliente = { nombres, apellidos, telefono, fechaEntrega, imagen };
         const clienteRef = await db.collection("cliente").add(nuevoCliente);
+
         res.status(201).json({ id: clienteRef.id, ...nuevoCliente });
     } catch (error) {
         console.error("Error al crear cliente:", error);
@@ -46,10 +66,31 @@ exports.createCliente = async (req, res) => {
 exports.updateCliente = async (req, res) => {
     try {
         const { id } = req.params;
-        const datosActualizados = req.body;
+        const { nombres, apellidos, telefono, fechaEntrega, imagen } = req.body;
 
-        await db.collection("cliente").doc(id).update(datosActualizados);
-        res.status(200).json({ id, ...datosActualizados });
+        if (imagen && typeof imagen !== "string") {
+            return res.status(400).json({ error: "El campo imagen debe ser una cadena en Base64" });
+        }
+
+        const clienteRef = db.collection("cliente").doc(id);
+
+        const clienteDoc = await clienteRef.get();
+        if (!clienteDoc.exists) {
+            return res.status(404).send("Cliente no encontrado");
+        }
+
+        // Actualizar los campos del cliente
+        const updatedCliente = {
+            nombres,
+            apellidos,
+            telefono,
+            fechaEntrega,
+            imagen: imagen || clienteDoc.data().imagen, // Si no se pasa imagen, conservar la anterior
+        };
+
+        await clienteRef.update(updatedCliente);
+
+        res.status(200).json({ id, ...updatedCliente });
     } catch (error) {
         console.error("Error al actualizar cliente:", error);
         res.status(500).send("Error al actualizar cliente");

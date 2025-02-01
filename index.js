@@ -9,7 +9,8 @@ app.use(cors());
 
 const PORT = process.env.PORT;
 
-app.use(express.json());
+app.use(express.json({ limit: "50mb" })); // Ajusta según sea necesario
+app.use(express.urlencoded({ limit: "50mb", extended: true }));
 
 // Usar las rutas de clientes
 app.use("/api/clientes", clienteRoutes);
