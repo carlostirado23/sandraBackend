@@ -1,4 +1,5 @@
 const { google } = require("googleapis");
+const fs = require("fs");
 require("dotenv").config();
 
 // Función para procesar la clave privada
@@ -30,31 +31,30 @@ const drive = google.drive({ version: "v3", auth });
 // Función para subir un archivo a Google Drive
 const uploadFile = async (filePath, fileName, mimeType) => {
     try {
-        const folderId = process.env.GOOGLE_DRIVE_FOLDER_ID;
-        if (!folderId) {
-            throw new Error("GOOGLE_DRIVE_FOLDER_ID no está definido en el .env");
-        }
-
         const fileMetadata = {
             name: fileName,
-            parents: [folderId], // Sube el archivo a la carpeta específica
+            parents: [process.env.GOOGLE_DRIVE_FOLDER_ID], // El ID de la carpeta donde se subirán los archivos
         };
 
         const media = {
-            mimeType,
-            body: require("fs").createReadStream(filePath),
+            mimeType: mimeType,
+            body: fs.createReadStream(filePath),
         };
 
-        const response = await drive.files.create({
-            resource: fileMetadata,
-            media,
+        const file = await drive.files.create({
+            requestBody: fileMetadata,
+            media: media,
             fields: "id",
         });
 
-        console.log(`Archivo subido con éxito, ID: ${response.data.id}`);
-        return response.data.id;
+        console.log("Archivo subido con ID:", file.data.id);
+        return file.data.id;
     } catch (error) {
-        console.error("Error subiendo archivo a Google Drive:", error.message);
+        console.error("Error al subir archivo:", error.message);
+        if (error.response) {
+            console.error("Error response:", error.response.data);
+        }
+        throw error;
     }
 };
 

@@ -32,7 +32,32 @@ exports.getClienteById = async (req, res) => {
 // Crear un nuevo cliente
 exports.createCliente = async (req, res) => {
     try {
-        const { nombres, apellidos, telefono, fechaEntrega, imagen } = req.body;
+        const {
+            nombres,
+            apellidos,
+            telefono,
+            espalda,
+            tDelantero,
+            tTrasero,
+            busto,
+            altBusto,
+            sepBusto,
+            cintura,
+            siza,
+            larManga,
+            contManga,
+            escote,
+            larTotal,
+            contCintura,
+            cadera,
+            altCadera,
+            tipoTela,
+            fechaPrueba,
+            fechaEntrega,
+            precio,
+            adelanto,
+            imagen,
+        } = req.body;
 
         if (!imagen) {
             return res.status(400).json({ error: "El campo imagen es obligatorio" });
@@ -51,8 +76,36 @@ exports.createCliente = async (req, res) => {
             return res.status(400).json({ error: "La imagen es demasiado grande. Debe ser menor a 1MB." });
         }
 
-        // Crear el nuevo cliente
-        const nuevoCliente = { nombres, apellidos, telefono, fechaEntrega, imagen };
+        // Crear el nuevo cliente, eliminando valores undefined
+        const nuevoCliente = Object.fromEntries(
+            Object.entries({
+                nombres,
+                apellidos,
+                telefono,
+                espalda,
+                tDelantero,
+                tTrasero,
+                busto,
+                altBusto,
+                sepBusto,
+                cintura,
+                siza,
+                larManga,
+                contManga,
+                escote,
+                larTotal,
+                contCintura,
+                cadera,
+                altCadera,
+                tipoTela,
+                fechaPrueba,
+                fechaEntrega,
+                precio,
+                adelanto,
+                imagen,
+            }).filter(([_, v]) => v !== undefined)
+        );
+
         const clienteRef = await db.collection("cliente").add(nuevoCliente);
 
         res.status(201).json({ id: clienteRef.id, ...nuevoCliente });
@@ -66,7 +119,32 @@ exports.createCliente = async (req, res) => {
 exports.updateCliente = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombres, apellidos, telefono, fechaEntrega, imagen } = req.body;
+        const {
+            nombres,
+            apellidos,
+            telefono,
+            espalda,
+            tDelantero,
+            tTrasero,
+            busto,
+            altBusto,
+            sepBusto,
+            cintura,
+            siza,
+            larManga,
+            contManga,
+            escote,
+            larTotal,
+            contCintura,
+            cadera,
+            altCadera,
+            tipoTela,
+            fechaPrueba,
+            fechaEntrega,
+            precio,
+            adelanto,
+            imagen,
+        } = req.body;
 
         if (imagen && typeof imagen !== "string") {
             return res.status(400).json({ error: "El campo imagen debe ser una cadena en Base64" });
@@ -84,7 +162,26 @@ exports.updateCliente = async (req, res) => {
             nombres,
             apellidos,
             telefono,
+            espalda,
+            tDelantero,
+            tTrasero,
+            busto,
+            altBusto,
+            sepBusto,
+            cintura,
+            siza,
+            larManga,
+            contManga,
+            escote,
+            larTotal,
+            contCintura,
+            cadera,
+            altCadera,
+            tipoTela,
+            fechaPrueba,
             fechaEntrega,
+            precio,
+            adelanto,
             imagen: imagen || clienteDoc.data().imagen, // Si no se pasa imagen, conservar la anterior
         };
 
